@@ -23,7 +23,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
     description: "",
     imageUrl: "",
   );
-  var _isInt = false;
+  var _isInt = true;
+  var _initValues = {
+    "title": "",
+    "description": "",
+    "price": "",
+    "imageUrl": "",
+  };
 
   @override
   void initState() {
@@ -35,7 +41,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void didChangeDependencies() {
     if (_isInt) {
       final productId = ModalRoute.of(context).settings.arguments as String;
-      Provider.of<ProductsProvider>(context, listen: false).findById(productId);
+      if (productId != null) {
+        _editedProduct = Provider.of<ProductsProvider>(context, listen: false)
+            .findById(productId);
+        _initValues = {
+          "title": _editedProduct.title,
+          "description": _editedProduct.description,
+          "price": _editedProduct.price.toString(),
+          // imageurl
+          "imageUrl": "",
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
     }
     _isInt = false;
     super.didChangeDependencies();
@@ -58,8 +75,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
           (!_imageUrlController.text.startsWith("http") &&
               !_imageUrlController.text.startsWith("https")) ||
           (!_imageUrlController.text.endsWith(".png") &&
-              !_imageUrlController.text.startsWith("jpg") &&
-              !_imageUrlController.text.startsWith("jpeg"))) {
+              !_imageUrlController.text.endsWith("jpg") &&
+              !_imageUrlController.text.endsWith("jpeg"))) {
         return;
       }
       setState(() {});
@@ -73,8 +90,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     // _form.currentState.validate();
     _form.currentState.save();
-    Provider.of<ProductsProvider>(context, listen: false)
-        .addProudct(_editedProduct);
+    if (_editedProduct.id != null) {
+      Provider.of<ProductsProvider>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    } else {
+      Provider.of<ProductsProvider>(context, listen: false)
+          .addProudct(_editedProduct);
+    }
     Navigator.of(context).pop();
   }
 
@@ -94,6 +116,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: _initValues["title"],
                 decoration:
                     InputDecoration(labelText: "Title", errorStyle: null),
                 textInputAction: TextInputAction.next,
@@ -112,11 +135,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     price: _editedProduct.price,
                     description: _editedProduct.description,
                     imageUrl: _editedProduct.imageUrl,
-                    id: null,
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
               ),
               TextFormField(
+                initialValue: _initValues["price"],
                 decoration: InputDecoration(labelText: "Price"),
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
@@ -142,12 +167,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     price: double.parse(value),
                     description: _editedProduct.description,
                     imageUrl: _editedProduct.imageUrl,
-                    id: null,
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: "Discription"),
+                initialValue: _initValues["description"],
+                decoration: InputDecoration(labelText: "Description"),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 focusNode: _discraptionFocusNode,
@@ -166,7 +193,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     price: _editedProduct.price,
                     description: value,
                     imageUrl: _editedProduct.imageUrl,
-                    id: null,
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
               ),
@@ -210,8 +238,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             (!value.startsWith("http") &&
                                 !value.startsWith("https")) ||
                             (!value.endsWith(".png") &&
-                                !value.startsWith("jpg") &&
-                                !value.startsWith("jpeg"))) {
+                                !value.endsWith("jpg") &&
+                                !value.endsWith("jpeg"))) {
                           return "Enter valid Image URL";
                         }
                         return null;
@@ -222,7 +250,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           price: _editedProduct.price,
                           description: _editedProduct.description,
                           imageUrl: value,
-                          id: null,
+                          id: _editedProduct.id,
+                          isFavorite: _editedProduct.isFavorite,
                         );
                       },
                     ),
