@@ -54,15 +54,15 @@ class ProductsProvider with ChangeNotifier {
     return _items.where((peoductItem) => peoductItem.isFavorite).toList();
   }
 
-  // void showFavoritesOnly() {
-  //   _showFavoritesOnly = true;
-  //   notifyListeners();
-  // }
+  void showFavoritesOnly() {
+    //   _showFavoritesOnly = true;
+    //   notifyListeners();
+    // }
 
-  // void showAll() {
-  //   _showFavoritesOnly = false;
-  //   notifyListeners();
-  // }
+    // void showAll() {
+    //   _showFavoritesOnly = false;
+    //   notifyListeners();
+  }
 
   Future<void> fetchAndSetProudcts() async {
     const url =
@@ -70,6 +70,9 @@ class ProductsProvider with ChangeNotifier {
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null) {
+        return;
+      }
       // print(json.decode(response.body));
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
