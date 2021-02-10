@@ -101,7 +101,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     } else {
       try {
         await Provider.of<ProductsProvider>(context, listen: false)
-            .addProudct(_editedProduct);
+            .addProduct(_editedProduct);
       } catch (error) {
         await showDialog(
           context: context,
@@ -162,7 +162,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       validator: (value) {
                         if (value.isEmpty) {
-                          return "Please mother fucker enter a value.";
+                          return "Please enter a value.";
                         }
                         return null;
                       },

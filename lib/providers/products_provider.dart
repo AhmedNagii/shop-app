@@ -42,6 +42,9 @@ class ProductsProvider with ChangeNotifier {
     // ),
   ];
   // var _showFavoritesOnly = false;
+  final String authToken;
+
+  ProductsProvider(this.authToken, this._items);
 
   List<Product> get items {
     // if (_showFavoritesOnly) {
@@ -64,9 +67,9 @@ class ProductsProvider with ChangeNotifier {
     //   notifyListeners();
   }
 
-  Future<void> fetchAndSetProudcts() async {
-    const url =
-        "https://shop-app-1e38a-default-rtdb.firebaseio.com/products.json";
+  Future<void> fetchAndSetProducts() async {
+    final url =
+        "https://shop-app-1e38a-default-rtdb.firebaseio.com/products.json?auth=$authToken";
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -96,9 +99,9 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  Future<void> addProudct(Product product) async {
-    const url =
-        "https://shop-app-1e38a-default-rtdb.firebaseio.com/products.json";
+  Future<void> addProduct(Product product) async {
+    final url =
+        "https://shop-app-1e38a-default-rtdb.firebaseio.com/products.json?auth=$authToken";
     try {
       final response = await http.post(
         url,
