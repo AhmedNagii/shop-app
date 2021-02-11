@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/cart.dart';
+import '../providers/auth.dart';
+import '../providers/cart.dart';
 
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
@@ -16,6 +17,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
     return ClipRRect(
       // => this widget can be used to force the child to take radius
       borderRadius: BorderRadius.circular(10),
@@ -42,7 +44,7 @@ class ProductItem extends StatelessWidget {
                 color: Theme.of(context).accentColor,
               ),
               onPressed: () {
-                product.changeFavoritsStatus();
+                product.changeFavoritsStatus(authData.token);
               },
             ),
           ),

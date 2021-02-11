@@ -5,13 +5,13 @@ import 'package:http/http.dart' as http;
 
 import 'cart.dart';
 
-class TheOrderItem {
+class OrderItem {
   final String id;
   final double amount;
   final List<CartItem> proudcts;
   final DateTime dateTime;
 
-  TheOrderItem({
+  OrderItem({
     @required this.id,
     @required this.amount,
     @required this.proudcts,
@@ -20,30 +20,31 @@ class TheOrderItem {
 }
 
 class Orders with ChangeNotifier {
-  List<TheOrderItem> _orders = [];
+  List<OrderItem> _orders = [];
   final String authToken;
 
   Orders(this.authToken, this._orders);
-  List<TheOrderItem> get orders {
+
+  List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    const url =
-        "https://shop-app-1e38a-default-rtdb.firebaseio.com/orders.json";
+    final url =
+        "https://shop-app-1e38a-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
     final response = await http.get(url);
-    final List<TheOrderItem> loadedOrders = [];
+    final List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     if (extractedData == null) {
       return;
     }
     extractedData.forEach((orderId, orderData) {
       loadedOrders.add(
-        TheOrderItem(
+        OrderItem(
           id: orderId,
           amount: orderData["amount"],
           dateTime: DateTime.parse(orderData["dateTime"]),
-          proudcts: (orderData["products"] as List<dynamic>)
+          proudcts: (orderData["proudcts"] as List<dynamic>)
               .map(
                 (item) => CartItem(
                   id: item["id"],
@@ -61,8 +62,8 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    const url =
-        "https://shop-app-1e38a-default-rtdb.firebaseio.com/orders.json";
+    final url =
+        "https://shop-app-1e38a-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
     final timestamp = DateTime.now();
     try {
       final response = await http.post(
@@ -73,15 +74,15 @@ class Orders with ChangeNotifier {
           "proudcts": cartProducts
               .map((cp) => {
                     "id": cp.id,
-                    "title": cp.title,
-                    "quantity": cp.quantity,
                     "price": cp.price,
+                    "quantity": cp.quantity,
+                    "title": cp.title,
                   })
               .toList(),
         }),
       );
 
-      final newOrder = TheOrderItem(
+      final newOrder = OrderItem(
         id: json.decode(response.body)["name"],
         amount: total,
         proudcts: cartProducts,
@@ -95,3 +96,98 @@ class Orders with ChangeNotifier {
     }
   }
 }
+
+// import 'dart:convert';
+
+// import 'package:flutter/foundation.dart';
+// import 'package:http/http.dart' as http;
+
+// import './cart.dart';
+
+// class OrderItem {
+//   final String id;
+//   final double amount;
+//   final List<CartItem> products;
+//   final DateTime dateTime;
+
+//   OrderItem({
+//     @required this.id,
+//     @required this.amount,
+//     @required this.products,
+//     @required this.dateTime,
+//   });
+// }
+
+// class Orders with ChangeNotifier {
+//   List<OrderItem> _orders = [];
+//   final String authToken;
+
+//   Orders(this.authToken, this._orders);
+
+//   List<OrderItem> get orders {
+//     return [..._orders];
+//   }
+
+//   Future<void> fetchAndSetOrders() async {
+//     final url =
+//         "https://shop-app-1e38a-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
+//     final response = await http.get(url);
+//     final List<OrderItem> loadedOrders = [];
+//     final extractedData = json.decode(response.body) as Map<String, dynamic>;
+//     if (extractedData == null) {
+//       return;
+//     }
+//     extractedData.forEach((orderId, orderData) {
+//       loadedOrders.add(
+//         OrderItem(
+//           id: orderId,
+//           amount: orderData['amount'],
+//           dateTime: DateTime.parse(orderData['dateTime']),
+//           products: (orderData['products'] as List<dynamic>)
+//               .map(
+//                 (item) => CartItem(
+//                   id: item['id'],
+//                   price: item['price'],
+//                   quantity: item['quantity'],
+//                   title: item['title'],
+//                 ),
+//               )
+//               .toList(),
+//         ),
+//       );
+//     });
+//     _orders = loadedOrders.reversed.toList();
+//     notifyListeners();
+//   }
+
+//   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
+//     final url =
+//         "https://shop-app-1e38a-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
+//     final timestamp = DateTime.now();
+//     final response = await http.post(
+//       url,
+//       body: json.encode({
+//         'amount': total,
+//         'dateTime': timestamp.toIso8601String(),
+//         'products': cartProducts
+//             .map((cp) => {
+//                   'id': cp.id,
+//                   'title': cp.title,
+//                   'quantity': cp.quantity,
+//                   'price': cp.price,
+//                 })
+//             .toList(),
+//       }),
+//     );
+//     _orders.insert(
+//       0,
+//       OrderItem(
+//         id: json.decode(response.body)['name'],
+//         amount: total,
+//         dateTime: timestamp,
+//         products: cartProducts,
+//       ),
+//     );
+//     notifyListeners();
+//   }
+// }
