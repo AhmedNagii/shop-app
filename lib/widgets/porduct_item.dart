@@ -25,7 +25,7 @@ class ProductItem extends StatelessWidget {
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).pushNamed(
-              // 01126491491    .
+              // 01126491491
               ProductDetailScreen.routename,
               arguments: product.id,
             );
@@ -44,7 +44,7 @@ class ProductItem extends StatelessWidget {
                 color: Theme.of(context).accentColor,
               ),
               onPressed: () {
-                product.changeFavoritsStatus(authData.token);
+                product.changeFavoritsStatus(authData.token, authData.userId);
               },
             ),
           ),

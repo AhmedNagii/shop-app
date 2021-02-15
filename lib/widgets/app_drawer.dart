@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 import '../screens/User_Profucts_screen.dart';
 import '../screens/orders_screen.dart';
 
@@ -54,6 +56,13 @@ class AppDrawer extends StatelessWidget {
           _buildListTile("Manage Products", Icons.shopping_basket, () {
             Navigator.of(context)
                 .pushReplacementNamed(UserProductsScreen.routeName);
+          }),
+          Divider(),
+          _buildListTile("Log Out", Icons.logout, () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushReplacementNamed("/");
+            //Navigator.of(conte.pushReplacementNamed(UserProductsScreen.routeName);
+            Provider.of<Auth>(context, listen: false).logout();
           }),
         ],
       ),
