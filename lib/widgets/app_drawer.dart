@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/helpers/custom_route.dart';
 import 'package:shop_app/providers/auth.dart';
 import '../screens/User_Profucts_screen.dart';
 import '../screens/orders_screen.dart';
@@ -50,7 +51,13 @@ class AppDrawer extends StatelessWidget {
           }),
           Divider(),
           _buildListTile("My Orders", Icons.shopping_basket, () {
-            Navigator.of(context).pushReplacementNamed(OrdersScreen.routeName);
+            //Navigator.of(context).pushReplacementNamed(OrdersScreen.routeName);
+            //use coustom on the fly
+            Navigator.of(context).pushReplacement(
+              CustomRoute(
+                builder: (ctx) => OrdersScreen(),
+              ),
+            );
           }),
           Divider(),
           _buildListTile("Manage Products", Icons.shopping_basket, () {

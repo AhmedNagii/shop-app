@@ -37,36 +37,44 @@ class _OrderItemState extends State<OrderItem> {
               },
             ),
           ),
-          if (_expanded)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-              height: min(widget.order.proudcts.length * 20.0 + 10, 100),
-              child: ListView(
-                children: widget.order.proudcts
-                    .map(
-                      (prod) => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            prod.title,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+          AnimatedContainer(
+            constraints: BoxConstraints(
+              minHeight: _expanded
+                  ? min(widget.order.proudcts.length * 20.0 + 10, 100)
+                  : 0,
+              maxHeight: _expanded
+                  ? min(widget.order.proudcts.length * 20.0 + 10, 100)
+                  : 0,
+            ),
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+            child: ListView(
+              children: widget.order.proudcts
+                  .map(
+                    (prod) => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          prod.title,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            '${prod.quantity}x \$${prod.price}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey,
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                    .toList(),
-              ),
-            )
+                        ),
+                        Text(
+                          '${prod.quantity}x \$${prod.price}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                  .toList(),
+            ),
+          )
         ],
       ),
     );
